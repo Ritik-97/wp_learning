@@ -29,7 +29,8 @@ if (current_user_can('administrator')) {
         echo '<tbody>';
 
         foreach ($users as $user) {
-            $user_roles = get_user_meta($user->ID, $wpdb->prefix . 'capabilities', true);
+            $user_data = get_userdata($user->ID);
+            $user_roles = $user_data->roles;
             $user_roles_string = implode(', ', $user_roles);
 
             echo '<tr>';

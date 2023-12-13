@@ -11,13 +11,16 @@ $error_messages = array(
 if (!$User_ID) {
 
     if (isset($_POST['btn_submit'])) {
-        $username = ($_POST['username']);
-        $password = ($_POST['password']);
+        $username = sanitize_user($_POST['username']);
+        $password = sanitize_text_field($_POST['password']);
 
+
+        // Validation for username
         if (empty($username)) {
             $error_messages['username'] = 'Please enter a username/email.';
         }
 
+        // Validation for password
         if (empty($password)) {
             $error_messages['password'] = 'Please enter a password.';
         }
@@ -88,6 +91,8 @@ if (!$User_ID) {
             $('#submit').click(function () {
                 var username = $('#username').val();
                 var password = $('#password').val();
+                console.log(password)
+                // return 0;
                   // $('#loader').attr("src", "https://ritik.devwork.in/wp-content/uploads/2023/12/loader.gif");
                   //    $('#loader').show();
 
@@ -97,11 +102,13 @@ if (!$User_ID) {
                 if (username === '') {
                     $('#username').after('<p class="error-message" style="color: red;">Please enter a username/email.</p>');
                 }
+
                 // Validation for password
                 if (password === '') {
                     $('#password').after('<p class="error-message" style="color: red;">Please enter a password.</p>');
                 }
 
+                // If there are no validation errors, proceed with AJAX
                 if ($('.error-message').length === 0) {
                     $.ajax({
                         type: 'POST',
@@ -112,8 +119,11 @@ if (!$User_ID) {
                             'btn_submit': true
                         },
                         success: function (response) {
+                            // Handle the response
+                            console.log(response);
 
-                        // $('#loader').hide();
+
+                        $('#loader').hide();
 
                             if (response.includes('Invalid login credentials')) {
                                 $('#form').append('<p class="error-message" style="color: red; text-align: center;">Invalid login credentials</p>');
@@ -125,14 +135,17 @@ if (!$User_ID) {
                             }
                         },
                         error: function (error) {
+                            // Handle errors
                             console.log(error);
-                        // $('#loader').hide();
+                        $('#loader').hide();
 
                         },
                         beforeSend: function () {
+                            // Disable the button and show loading indicator
                             $('#submit').prop('disabled', true);
                         },
                         complete: function () {
+                            // Enable the button after processing
                             $('#submit').prop('disabled', false);
 
                         }

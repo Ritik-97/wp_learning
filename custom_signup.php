@@ -193,9 +193,36 @@ get_header();
         }
 
         // Check if any error messages are present
-        // var errorMessages = document.querySelectorAll('.error-message');
-        // console.log(errorMessages);
-     
+        var errorMessages = document.querySelectorAll('.error-message');
+        var hasErrors = Array.from(errorMessages).some(function (element) {
+            return element.textContent.trim() !== '';
+        });
+
+        // If there are errors, prevent form submission
+        // if (hasErrors != ''){
+        //     // console.log('error');
+        //     return 0;
+        // }
+
+
+        //   var errorMessages = document.querySelectorAll('.error-message');
+
+        // if (errorMessages.length > 0) {
+        //     console.log(errorMessages.length)
+        //     // If there are error messages, do not proceed with the AJAX call
+        //     return ;
+        // }
+
+
+        // Add additional validations as needed
+
+        // Submit the form if all validations pass
+        // Otherwise, display an error message or prevent form submission
+        // For example:
+        // document.getElementById('register-message').textContent = 'Form submitted successfully';
+        // return true;
+
+        // In this example, the form will not submit because the function returns false
     }
 </script>
 </div>
@@ -227,6 +254,7 @@ get_header();
     function updatePasswordStrength() {
         const password = document.getElementById('register-password').value;
         const strength = calculatePasswordStrength(password);
+        
         document.getElementById('password-strength').innerText = 'Password Strength: ' + strength;
     }
 
@@ -260,18 +288,20 @@ get_header();
         passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
     }
 
-    function submitForm(event) {
-        event.preventDefault(); // Prevent the default form submission
 
-        // Collect form data
-        const formData = {
-            username: document.getElementById('register-username').value,
-            email: document.getElementById('register-email').value,
-            // Add other form fields as needed
-        };
+    // function submitForm(event) {
+    //     event.preventDefault(); // Prevent the default form submission
 
-        xhr.send(JSON.stringify(formData));
-    }
+    //     // Collect form data
+    //     const formData = {
+    //         username: document.getElementById('register-username').value,
+    //         email: document.getElementById('register-email').value,
+    //         // Add other form fields as needed
+    //     };
+
+    //     // Convert formData to JSON before sending
+    //     xhr.send(JSON.stringify(formData));
+    // }
 
 </script>
 <?php

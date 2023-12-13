@@ -143,6 +143,11 @@ function my_custom_form () {
 add_shortcode('custom_form', 'my_custom_form');
 
 
+
+
+
+
+
 function mycustom_wp_footer() {
     ?>
 <script type="text/javascript">
@@ -174,7 +179,6 @@ if ($pagenow == "wp-login.php" && $_GET['action']!=="logout"){
 }
 }
 
-
 // Enqueue jQuery and your script
 function enqueue_ajax_auth_scripts() {
     wp_enqueue_script('jquery');
@@ -186,60 +190,61 @@ function enqueue_ajax_auth_scripts() {
 }
 add_action('wp_enqueue_scripts', 'enqueue_ajax_auth_scripts');
 
-
-
-
 // Handle user registration and login
 function ajax_register() {
     check_ajax_referer('ajax-auth-nonce', 'security');
 
-    $username = sanitize_user($_POST['username']);
-    $email = sanitize_email($_POST['email']);
-    $firstname = sanitize_text_field($_POST['first_name']);
-    $lastname = sanitize_text_field($_POST['last_name']);
-    $password = $_POST['password'];
-    $selected_role = sanitize_text_field($_POST['role']); // Assuming 'role' is a select box with role options
+    $username = ($_POST['username']);
+    $email = ($_POST['email']);
+    $firstname = ($_POST['first_name']);
+    $lastname = ($_POST['last_name']);
+    $password = ($_POST['password']); // Sanitize password
+    $selected_role = ($_POST['role']); // Use 'user_role' instead of 'role'
 
-    // Make sure the selected role is valid, you can customize this based on your needs
-    $allowed_roles = array('moderator', 'customer', 'subscriber', 'administrator'); // Define your allowed roles
+    // Validate and sanitize the selected role
+    $allowed_roles = array('moderator', 'customer', 'subscriber', 'administrator');
     $user_role = in_array($selected_role, $allowed_roles) ? $selected_role : 'moderator';
+        // echo json_encode (['role'=>$selected_role, 'password'=>$password ,'username'=>$username]);
+
+        // die();
 
     // Get the capabilities associated with the selected role
     $role_capabilities = get_role($user_role)->capabilities;
 
-    $user_data = array(
-        'user_login' => $username,
-        'user_email' => $email,
-        'user_pass' => $password,
-        'first_name' => $firstname,
-        'last_name' => $lastname,
-        'role' => $user_role,
+   $user_data = array(
+    'user_login' => $username,
+    'user_email' => $email,
+    'user_pass' => $password,
+    'first_name' => $firstname,
+    'last_name' => $lastname,
+    'role' => $user_role,
+);
+
+// Insert the user
+$user_id = wp_insert_user($user_data);
+
+if (is_wp_error($user_id)) {
+    echo json_encode(array('registered' => false, 'message' => $user_id->get_error_message()));
+} else {
+    // Update user meta
+    update_user_meta($user_id, 'first_name', $firstname);
+    update_user_meta($user_id, 'last_name', $lastname);
+
+    // Sign the user in after registration
+    $creds = array(
+        'user_login'    => $username,
+        'user_password' => $password,
+        'remember'      => true,
     );
 
-    $user_id = wp_insert_user($user_data);
+    $user = wp_signon($creds, false);
 
-    if (is_wp_error($user_id)) {
-        echo json_encode(array('registered' => false, 'message' => $user_id->get_error_message()));
+    if (is_wp_error($user)) {
+        echo json_encode(array('registered' => true, 'message' => 'Registration successful, but login failed.'));
     } else {
-        // Update user meta
-        update_user_meta($user_id, 'first_name', $firstname);
-        update_user_meta($user_id, 'last_name', $lastname);
-
-        // Sign the user in after registration
-        $creds = array(
-            'user_login'    => $username,
-            'user_password' => $password,
-            'remember'      => true,
-        );
-
-        $user = wp_signon($creds, false);
-
-        if (is_wp_error($user)) {
-            echo json_encode(array('registered' => true, 'message' => 'Registration successful, but login failed.'));
-        } else {
-            echo json_encode(array('registered' => true, 'message' => 'Registration and login successful.'));
-        }
+        echo json_encode(array('registered' => true, 'message' => 'Registration and login successful.'));
     }
+}
 
     header('Content-Type: application/json');
     exit;
@@ -402,10 +407,65 @@ add_filter('wp_nav_menu_objects', 'customize_menu_items', 10, 2);
 
 
 
-function enqueue_jquery() {
-    wp_enqueue_script('jquery');
-}
-add_action('wp_enqueue_scripts', 'enqueue_jquery');
+// function enqueue_jquery() {
+//     wp_enqueue_script('jquery');
+// }
+// add_action('wp_enqueue_scripts', 'enqueue_jquery');
 
-    
+
+// // //script to update user details
+// // // Add this code to your theme's functions.php file or in a custom plugin
+// add_action('wp_ajax_update_user_details', 'update_user_details');
+// add_action('wp_ajax_nopriv_update_user_details', 'update_user_details');
+
+// function update_user_details() {
+//     // Verify nonce
+//     $nonce = $_POST['nonce'];
+//     if (!wp_verify_nonce($nonce, 'update_user_details_nonce')) {
+//         echo json_encode(array('status' => 'error', 'message' => 'Nonce verification failed.'));
+//         wp_die();
+//     }
+
+//     // Check if user is logged in
+//     if (!is_user_logged_in()) {
+//         echo json_encode(array('status' => 'error', 'message' => 'User not logged in.'));
+//         wp_die();
+//     }
+
+//     // Get current user ID
+//     $user_id = get_current_user_id();
+
+//     // Sanitize and get form data
+//     $email = sanitize_email($_POST['editUserEmail']);
+//     $user_login = sanitize_text_field($_POST['editUserName']);
+//     $password = sanitize_text_field($_POST['editUserPassword']);
+
+//     // Update email and display name
+//     $update_data = array(
+//         'ID'           => $user_id,
+//         'user_email'   => $email,
+//         'user_login'   => $user_login,
+//     );
+
+//     $dataupdate = wp_update_user($update_data);
+
+//     // Update password if provided
+//     if (!empty($password)) {
+//         wp_set_password($password, $user_id);
+//     }
+
+//     if (is_wp_error($dataupdate)) {
+//         echo json_encode(array('status' => 'error', 'message' => $dataupdate->get_error_message()));
+//         wp_die();
+//     } else {
+//         // Get updated user data
+//         $updated_user = get_user_by('ID', $user_id);
+
+//         echo json_encode(array('status' => 'success', 'message' => 'User details updated successfully.', 'user' => $updated_user));
+//         wp_die();
+//     }
+// }
+
+
+
 ?>
