@@ -25,7 +25,7 @@ if (current_user_can('administrator')) {
 
     if ($users) {
         echo '<table id="usersTable" class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr><th>ID</th><th>Login</th><th>Nicename</th><th>Email</th><th>Display Name</th><th>User Roles</th></tr></thead>';
+        echo '<thead><tr><th>ID</th><th>Username</th><th>Nicename</th><th>Email</th><th>Display Name</th><th>User Roles</th></tr></thead>';
         echo '<tbody>';
 
         foreach ($users as $user) {

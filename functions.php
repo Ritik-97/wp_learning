@@ -413,8 +413,10 @@ add_filter('wp_nav_menu_objects', 'customize_menu_items', 10, 2);
 // add_action('wp_enqueue_scripts', 'enqueue_jquery');
 
 
-// // //script to update user details
-// // // Add this code to your theme's functions.php file or in a custom plugin
+
+// // THIS IS UPDATING USERNAME AND EMAIL AND PASS AS DESIRED BUT LOGGING OUT THE USER
+// //script to update user details
+
 // add_action('wp_ajax_update_user_details', 'update_user_details');
 // add_action('wp_ajax_nopriv_update_user_details', 'update_user_details');
 
@@ -435,37 +437,118 @@ add_filter('wp_nav_menu_objects', 'customize_menu_items', 10, 2);
 //     // Get current user ID
 //     $user_id = get_current_user_id();
 
+//     // Globalize $wpdb
+//     global $wpdb;
+
 //     // Sanitize and get form data
-//     $email = sanitize_email($_POST['editUserEmail']);
-//     $user_login = sanitize_text_field($_POST['editUserName']);
-//     $password = sanitize_text_field($_POST['editUserPassword']);
+//     $email = sanitize_email($_POST['editUserEmail']); // Sanitize email
+//     $user_login = sanitize_user($_POST['editUserName']); // Sanitize username
+//     $password = sanitize_text_field($_POST['editUserPassword']); // Sanitize password
+//         $user_nicename = sanitize_user($_POST['editUserName']); // Sanitize username
 
-//     // Update email and display name
-//     $update_data = array(
-//         'ID'           => $user_id,
-//         'user_email'   => $email,
-//         'user_login'   => $user_login,
+
+//     // Update user_login, user_email, and password using custom query
+//     $wpdb->update(
+//         $wpdb->users,
+//         array(
+//             'user_login' => $user_login,
+//             'user_email' => $email,
+//             'user_nicename' => $user_nicename
+//         ),
+//         array('ID' => $user_id)
 //     );
-
-//     $dataupdate = wp_update_user($update_data);
 
 //     // Update password if provided
 //     if (!empty($password)) {
 //         wp_set_password($password, $user_id);
 //     }
 
-//     if (is_wp_error($dataupdate)) {
-//         echo json_encode(array('status' => 'error', 'message' => $dataupdate->get_error_message()));
-//         wp_die();
-//     } else {
-//         // Get updated user data
-//         $updated_user = get_user_by('ID', $user_id);
 
-//         echo json_encode(array('status' => 'success', 'message' => 'User details updated successfully.', 'user' => $updated_user));
-//         wp_die();
-//     }
+
+//     // Get updated user data
+//     $updated_user = get_user_by('ID', $user_id);
+
+
+//     // // Sign in the user again
+//     // $user = get_user_by('ID', $user_id);
+//     // wp_set_current_user($user_id, $user->user_login);
+//     // wp_set_auth_cookie($user_id);
+
+//  $creds = array(
+//         'user_login'    => $username,
+//         'user_password' => $password,
+//         'remember'      => true,
+//     );
+
+//     $user = wp_signon($creds, false);
+
+//     echo json_encode(array('status' => 'success', 'message' => 'User details updated successfully. Kindly Login Again ', 'user' => $updated_user));
+//     wp_die();
 // }
 
+// This is updating user_nicename and email not login_user but remains logged in 
+
+add_action('wp_ajax_update_user_details', 'update_user_details');
+add_action('wp_ajax_nopriv_update_user_details', 'update_user_details');
+
+function update_user_details() {
+    // Verify nonce
+    $nonce = $_POST['nonce'];
+    if (!wp_verify_nonce($nonce, 'update_user_details_nonce')) {
+        echo json_encode(array('status' => 'error', 'message' => 'Nonce verification failed.'));
+        wp_die();
+    }
+
+    // Check if user is logged in
+    if (!is_user_logged_in()) {
+        echo json_encode(array('status' => 'error', 'message' => 'User not logged in.'));
+        wp_die();
+    }
+
+    // Get current user ID
+    $user_id = get_current_user_id();
+
+    // Sanitize and get form data
+    $email = sanitize_email($_POST['editUserEmail']); // Sanitize email
+    $user_login = sanitize_user($_POST['editUserName']); // Sanitize username
+    $password = sanitize_text_field($_POST['editUserPassword']); // Sanitize password
+
+    // Get the user data
+    $user_data = get_userdata($user_id);
+
+    // Update user_email and password using wp_update_user
+    $updated_user_data = array(
+        'ID'         => $user_id,
+        'user_email' => $email,
+        // 'user_login' => $user_login,
+    );
+
+    if (!empty($password)) {
+        $updated_user_data['user_pass'] = $password;
+    }
+
+    wp_update_user($updated_user_data);
+
+    // Manually update user_login
+    if ($user_login !== $user_data->user_login) {
+        wp_update_user(array('ID' => $user_id, 'user_nicename' => $user_login));
+    }
+
+    // if ($user_login !== $user_data->user_login) {
+    //     wp_update_user(array('ID' => $user_id, 'user_login' => $user_login, 'user_nicename' => $user_login));
+    // }
+
+
+    // Sign in the user again
+    wp_set_current_user($user_id);
+    wp_set_auth_cookie($user_id);
+
+    // Get updated user data
+    $updated_user = get_user_by('ID', $user_id);
+
+    echo json_encode(array('status' => 'success', 'message' => 'User details updated successfully.', 'user' => $updated_user));
+    wp_die();
+}
 
 
 ?>
