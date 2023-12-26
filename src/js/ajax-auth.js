@@ -1,37 +1,32 @@
+
 jQuery(document).ready(function ($) {
     // Register AJAX
     $('#register-submit').on('click', function (e) {
         e.preventDefault(); // Prevent the default form submission behavior
 
         // Disable the button to prevent multiple clicks
-        // $(this).prop('disabled', true);
-        
+        $(this).prop('disabled', true);
+
+        // Show the loader within the button
+        $(this).html('<span id="loadergif" style="display: inline-block; vertical-align: middle;"><img src="https://ritik.devwork.in/wp-content/uploads/2023/12/loader.gif" style="width: 20px; height: 20px;"></span> Signing in');
+
         var errorMessages = document.querySelectorAll('.error-message');
+        var error_username = document.getElementById('error-username').innerText;
+        var error_email = document.getElementById('error-email').innerText;
+        var error_firstname = document.getElementById('error-firstname').innerText;
+        var error_lastname = document.getElementById('error-lastname').innerText;
+        var error_user_role = document.getElementById('error-user-role').innerText;
+        var error_password = document.getElementById('error-password').innerText;
 
-var error_username = document.getElementById('error-username').innerText;
-var error_email = document.getElementById('error-email').innerText;
-var error_firstname = document.getElementById('error-firstname').innerText;
-var error_lastname = document.getElementById('error-lastname').innerText;
-var error_user_role = document.getElementById('error-user-role').innerText;
-var error_pasword = document.getElementById('error-password').innerText;
+        if (error_username !== '' || error_firstname !== '' || error_lastname !== '' || error_user_role !== '' || error_email !== '' || error_password !== '') {
+            console.log('errors');
 
+            // Hide the loader within the button
+            $('#register-submit').html('Sign in');
+            $(this).prop('disabled', false);
 
-if(error_username != '' || error_firstname != ''|| error_lastname != ''|| error_user_role != ''||error_email != ''|| error_pasword!= ''){
-    console.log('errros');
-    return 0;
-}
-
-// console.log(errorMessages)
-//         if (errorMessages.length > 0) {
-//             console.log(errorMessages.length)
-//             // If there are error messages, do not proceed with the AJAX call
-//             return ;
-//         }
-
-
-        // Show a loader
-        $('#loader').attr("src", "https://ritik.devwork.in/wp-content/uploads/2023/12/loader.gif");
-        $('#loader').show();
+            return 0;
+        }
 
         var data = {
             action: 'ajax_register',
@@ -44,20 +39,14 @@ if(error_username != '' || error_firstname != ''|| error_lastname != ''|| error_
             role: $('#user_role').val(),
         };
 
-            // console.log($('#register-password').val());
-            // console.log($('#register-email').val());
-            // console.log($('#first_name').val());
-            // console.log($('#last_name').val());
-            // console.log($('#user_role').val());
-            // return 0;
         $.post(ajax_auth_object.ajaxurl, data, function (response) {
             console.log(response);
 
-            // Hide the loader
-            $('#loader').hide();
-
             // Enable the button after the registration process is complete
             $('#register-submit').prop('disabled', false);
+
+            // Hide the loader within the button
+            $('#register-submit').html('Sign in');
 
             // Display the message in #register-message
             $('#register-message').html(response.message);
@@ -66,19 +55,19 @@ if(error_username != '' || error_firstname != ''|| error_lastname != ''|| error_
             if (response.registered) {
                 // Optionally, you can redirect or perform other actions here
                 // window.location.href = "https://ritik.devwork.in"; // Redirect to the site URL
-                                window.location.href = "https://ritik.devwork.in/user-details";
-
+                window.location.href = "https://ritik.devwork.in/user-details";
             }
         }).fail(function (xhr, status, error) {
             // Log and display an error message if the request fails
             console.error(error);
             $('#register-message').html('An error occurred while processing your request.');
 
-            // Hide the loader
-            $('#loader').hide();
-
             // Enable the button after the registration process is complete
             $('#register-submit').prop('disabled', false);
+
+            // Hide the loader within the button
+            $('#register-submit').html('Sign in');
         });
     });
 });
+

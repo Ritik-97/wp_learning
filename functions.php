@@ -167,8 +167,6 @@ exit();
 add_action( 'wp_logout', 'redirect_to_custom_login');
 
 
-
-
 add_action( 'init', 'redirect_wp_admin');
 
 function redirect_wp_admin(){
@@ -182,7 +180,7 @@ if ($pagenow == "wp-login.php" && $_GET['action']!=="logout"){
 // Enqueue jQuery and your script
 function enqueue_ajax_auth_scripts() {
     wp_enqueue_script('jquery');
-    wp_enqueue_script('ajax-auth-script', get_stylesheet_directory_uri() . '/ajax-auth.js', array('jquery'), null, true);
+    wp_enqueue_script('ajax-auth-script', get_stylesheet_directory_uri() . '/src/js/ajax-auth.js', array('jquery'), null, true);
     wp_localize_script('ajax-auth-script', 'ajax_auth_object', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('ajax-auth-nonce'),
@@ -310,63 +308,6 @@ add_action('wp_ajax_nopriv_generate_password', 'generate_password_callback');
 // end delete user roles
 
 
-    
-    // user roles page 
-
-    function custom_page_content_with_roles() {
-        // global $wpdb;
-    
-        // echo '<div class="wrap">';
-        // echo '<h2 style="display: flex; flex-direction: column; align-items: center; margin: 25px auto;">List of Users with Roles</h2>';
-    
-        // $results = $wpdb->get_results("
-        //     SELECT u.ID, u.user_login, u.user_nicename, u.user_email, u.display_name, GROUP_CONCAT(um.meta_value) as user_roles
-        //     FROM {$wpdb->prefix}users u
-        //     LEFT JOIN {$wpdb->prefix}usermeta um ON u.ID = um.user_id AND um.meta_key = '{$wpdb->prefix}capabilities'
-        //     GROUP BY u.ID
-        // ");
-    
-        // if ($results) {
-        //     echo '<table class="wp-list-table widefat fixed striped">';
-        //     echo '<thead><tr><th>ID</th><th>Login</th><th>Nicename</th><th>Email</th><th>Display Name</th><th>User Roles</th></tr></thead>';
-        //     echo '<tbody>';
-    
-        //     foreach ($results as $result) {
-        //         echo '<tr>';
-        //         echo '<td>' . $result->ID . '</td>';
-        //         echo '<td>' . $result->user_login . '</td>';
-        //         echo '<td>' . $result->user_nicename . '</td>';
-        //         echo '<td>' . $result->user_email . '</td>';
-        //         echo '<td>' . $result->display_name . '</td>';
-        //         echo '<td>' . get_user_role_value($result->user_roles) . '</td>';
-        //         echo '</tr>';
-        //     }
-    
-        //     echo '</tbody></table>';
-        // } else {
-        //     echo '<p>No data found.</p>';
-        // }
-    
-        // echo '</div>';
-    }
-    
-    function get_user_role_value($user_roles) {
-        if (strpos($user_roles, 'administrator') !== false) {
-            return "Administrator";
-        } elseif (strpos($user_roles, 'subscriber') !== false) {
-            return "Subscriber";
-        } elseif (strpos($user_roles, 'moderator') !== false) {
-            return "Moderator";
-        }elseif (strpos($user_roles, 'customer') !== false) {
-            return "Customer";
-        }
-    
-        return -1; // Or any other default value.
-    }
-        
-
-
-
 
 //  function for custom  menu acc to user roles  //
 
@@ -407,84 +348,12 @@ add_filter('wp_nav_menu_objects', 'customize_menu_items', 10, 2);
 
 
 
-// function enqueue_jquery() {
-//     wp_enqueue_script('jquery');
-// }
-// add_action('wp_enqueue_scripts', 'enqueue_jquery');
+function enqueue_jquery() {
+    wp_enqueue_script('jquery');
+}
+add_action('wp_enqueue_scripts', 'enqueue_jquery');
 
 
-
-// // THIS IS UPDATING USERNAME AND EMAIL AND PASS AS DESIRED BUT LOGGING OUT THE USER
-// //script to update user details
-
-// add_action('wp_ajax_update_user_details', 'update_user_details');
-// add_action('wp_ajax_nopriv_update_user_details', 'update_user_details');
-
-// function update_user_details() {
-//     // Verify nonce
-//     $nonce = $_POST['nonce'];
-//     if (!wp_verify_nonce($nonce, 'update_user_details_nonce')) {
-//         echo json_encode(array('status' => 'error', 'message' => 'Nonce verification failed.'));
-//         wp_die();
-//     }
-
-//     // Check if user is logged in
-//     if (!is_user_logged_in()) {
-//         echo json_encode(array('status' => 'error', 'message' => 'User not logged in.'));
-//         wp_die();
-//     }
-
-//     // Get current user ID
-//     $user_id = get_current_user_id();
-
-//     // Globalize $wpdb
-//     global $wpdb;
-
-//     // Sanitize and get form data
-//     $email = sanitize_email($_POST['editUserEmail']); // Sanitize email
-//     $user_login = sanitize_user($_POST['editUserName']); // Sanitize username
-//     $password = sanitize_text_field($_POST['editUserPassword']); // Sanitize password
-//         $user_nicename = sanitize_user($_POST['editUserName']); // Sanitize username
-
-
-//     // Update user_login, user_email, and password using custom query
-//     $wpdb->update(
-//         $wpdb->users,
-//         array(
-//             'user_login' => $user_login,
-//             'user_email' => $email,
-//             'user_nicename' => $user_nicename
-//         ),
-//         array('ID' => $user_id)
-//     );
-
-//     // Update password if provided
-//     if (!empty($password)) {
-//         wp_set_password($password, $user_id);
-//     }
-
-
-
-//     // Get updated user data
-//     $updated_user = get_user_by('ID', $user_id);
-
-
-//     // // Sign in the user again
-//     // $user = get_user_by('ID', $user_id);
-//     // wp_set_current_user($user_id, $user->user_login);
-//     // wp_set_auth_cookie($user_id);
-
-//  $creds = array(
-//         'user_login'    => $username,
-//         'user_password' => $password,
-//         'remember'      => true,
-//     );
-
-//     $user = wp_signon($creds, false);
-
-//     echo json_encode(array('status' => 'success', 'message' => 'User details updated successfully. Kindly Login Again ', 'user' => $updated_user));
-//     wp_die();
-// }
 
 // This is updating user_nicename and email not login_user but remains logged in 
 
@@ -510,7 +379,8 @@ function update_user_details() {
 
     // Sanitize and get form data
     $email = sanitize_email($_POST['editUserEmail']); // Sanitize email
-    $user_login = sanitize_user($_POST['editUserName']); // Sanitize username
+    // $user_login = sanitize_user($_POST['editUserName']); // Sanitize username
+    $user_nicename = sanitize_user($_POST['editNiceName']); // Sanitize username
     $password = sanitize_text_field($_POST['editUserPassword']); // Sanitize password
 
     // Get the user data
@@ -520,7 +390,8 @@ function update_user_details() {
     $updated_user_data = array(
         'ID'         => $user_id,
         'user_email' => $email,
-        // 'user_login' => $user_login,
+        // 'user_nicename' => $user_login,
+        'user_nicename' => $user_nicename,
     );
 
     if (!empty($password)) {
@@ -529,20 +400,9 @@ function update_user_details() {
 
     wp_update_user($updated_user_data);
 
-    // Manually update user_login
-    if ($user_login !== $user_data->user_login) {
-        wp_update_user(array('ID' => $user_id, 'user_nicename' => $user_login));
-    }
+    
 
-    // if ($user_login !== $user_data->user_login) {
-    //     wp_update_user(array('ID' => $user_id, 'user_login' => $user_login, 'user_nicename' => $user_login));
-    // }
-
-
-    // Sign in the user again
-    wp_set_current_user($user_id);
-    wp_set_auth_cookie($user_id);
-
+   
     // Get updated user data
     $updated_user = get_user_by('ID', $user_id);
 
@@ -551,4 +411,24 @@ function update_user_details() {
 }
 
 
+function enqueue_my_styles() {
+    wp_enqueue_style('custom-style', get_stylesheet_directory_uri() . '/src/css/custom_style.css', array(), '1.0', 'all');
+}
+
+add_action('wp_enqueue_scripts', 'enqueue_my_styles');
+
+
+// Inside your child theme's functions.php file
+function enqueue_child_scripts() {
+    wp_enqueue_script('child-custom-script', get_stylesheet_directory_uri() . '/src/js/script.js', array('jquery'), '1.0', true);
+        wp_enqueue_script('child-custom-script-login', get_stylesheet_directory_uri() . '/src/js/login-script.js', array('jquery'), '1.0', true);
+
+
+}
+
+add_action('wp_enqueue_scripts', 'enqueue_child_scripts');
+
+
+
 ?>
+

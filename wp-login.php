@@ -46,6 +46,7 @@ if (!$User_ID) {
 
     get_header();
     ?>
+
     <div class="form-container" style="justify-content: center; margin-top: 0 auto; margin: 5rem auto;">
 
         <form method="post" id="form" style="width: 100%; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
@@ -71,90 +72,30 @@ if (!$User_ID) {
                 ?>
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <button type="button" id="submit" name="btn_submit" style="width: 100%; padding: 10px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Log in</button>
-              
-                <?php
-                if (!empty($error_messages['general'])) {
-                    echo '<p class="error-message" style="color: red; text-align: center;">' . $error_messages['general'] . '</p>';
-                }
-                ?>
-            </div>
+   
+    <div id="button-container" style="margin-bottom: 15px;">
+        <button type="button" id="submit" name="btn_submit" style="width: 100%; padding: 10px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">
+            Log in
+        </button>
+        <img id="loader" src="https://ritik.devwork.in/wp-content/uploads/2023/12/loader.gif" alt="Loading..." style="display: none; width: 20px; height: 20px; margin-right: 5px; margin-top: 10px;">
+
+    <?php
+    if (!empty($error_messages['general'])) {
+        echo '<p class="error-message" style="color: red; text-align: center;">' . $error_messages['general'] . '</p>';
+    }
+    ?>
+</div>
+
+
+
 
             <h4 style="margin-top: 20px; text-align: center; color: #333;">Don't have an account? <a href="<?php echo home_url() . '/registration-page' ?>" style="color: #4CAF50;">Sign up</a></h4>
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        jQuery(document).ready(function ($) {
-            $('#submit').click(function () {
-                var username = $('#username').val();
-                var password = $('#password').val();
-                console.log(password)
-                // return 0;
-                  // $('#loader').attr("src", "https://ritik.devwork.in/wp-content/uploads/2023/12/loader.gif");
-                  //    $('#loader').show();
 
-                // Clear previous error messages
-                $('.error-message').remove();
-                // Validation for username
-                if (username === '') {
-                    $('#username').after('<p class="error-message" style="color: red;">Please enter a username/email.</p>');
-                }
-
-                // Validation for password
-                if (password === '') {
-                    $('#password').after('<p class="error-message" style="color: red;">Please enter a password.</p>');
-                }
-
-                // If there are no validation errors, proceed with AJAX
-                if ($('.error-message').length === 0) {
-                    $.ajax({
-                        type: 'POST',
-                        url: window.location.href,
-                        data: {
-                            'username': username,
-                            'password': password,
-                            'btn_submit': true
-                        },
-                        success: function (response) {
-                            // Handle the response
-                            console.log(response);
-
-
-                        $('#loader').hide();
-
-                            if (response.includes('Invalid login credentials')) {
-                                $('#form').append('<p class="error-message" style="color: red; text-align: center;">Invalid login credentials</p>');
-                        $('#loader').hide();
-
-                            } else {
-                                window.location.href = "https://ritik.devwork.in/user-details/";
-                                // window.location.href = "https://ritik.devwork.in/wp-admin/profile.php/";
-                            }
-                        },
-                        error: function (error) {
-                            // Handle errors
-                            console.log(error);
-                        $('#loader').hide();
-
-                        },
-                        beforeSend: function () {
-                            // Disable the button and show loading indicator
-                            $('#submit').prop('disabled', true);
-                        },
-                        complete: function () {
-                            // Enable the button after processing
-                            $('#submit').prop('disabled', false);
-
-                        }
-                    });
-                }
-            });
-
-        });
-    </script>
+   
 
     <?php
     get_footer();
