@@ -7,10 +7,7 @@ $email=$_POST['email'];
 $password=$_POST['password'];
 $ConfirmPassword=$_POST['confirmpassword'];
 $error=array();
-    // if(strpos($username, '')!== FALSE){
-    //     $error['username_space'] ="Username has space";
-    // }
-
+ 
     if(empty($username)){
         $error['username_empty'] ="you must have to type username";
     }
@@ -28,7 +25,6 @@ $error=array();
     foreach ($error as $errors) {
         echo $errors;
         die();
-        # code...
     }
 
 
@@ -38,8 +34,6 @@ $error=array();
         echo "User Created Sucessfully!!!!";
 
     }
-
-
 
 }
 

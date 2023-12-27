@@ -2,10 +2,6 @@
 <?php
 /*Template Name: News*/
 get_header();
-// $cat = get_categories(array('taxanomy'=>'category'));
-// echo "<pre>";
-// print_r($cat);
-// echo "</pre>";
 $items = array(
     'post_type' => 'news'
 );
