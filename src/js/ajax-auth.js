@@ -54,7 +54,7 @@ jQuery(document).ready(function ($) {
             // Check if registered successfully
             if (response.registered) {
                 // Optionally, you can redirect or perform other actions here
-                // window.location.href = "https://ritik.devwork.in"; // Redirect to the site URL
+                // window.location.href = "https://ritik.devwork.in";
                 window.location.href = "https://ritik.devwork.in/user-details";
             }
         }).fail(function (xhr, status, error) {

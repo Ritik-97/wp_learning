@@ -21,7 +21,6 @@ if (isset($_POST['submitform'])){
 
     );  
     $post_id= wp_insert_post($new_post);
-    // echo "submit";
 
 }
 

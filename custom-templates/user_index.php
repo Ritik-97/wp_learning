@@ -103,8 +103,7 @@ document.getElementById('editUserForm').addEventListener('submit', function (eve
 
             if (response.status === 'success') {
                 // Update page content with new user details
-                // document.getElementById('editUserName').value = response.user.user_login;
-                // document.getElementById('editUserName').value = response.user.user_nicename;
+
                 document.getElementById('editUserEmail').value = response.user.user_email;
                 document.getElementById('editNiceName').value = response.user.user_nicename;
 
