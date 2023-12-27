@@ -1,6 +1,5 @@
 <?php
 /* Template Name: Custom Login Page */
-
 $User_ID = get_current_user_id();
 $error_messages = array(
     'username' => '',
