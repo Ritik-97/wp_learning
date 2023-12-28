@@ -1,4 +1,6 @@
 
+
+
 jQuery(document).ready(function ($) {
     // Register AJAX
     $('#register-submit').on('click', function (e) {
@@ -56,6 +58,7 @@ jQuery(document).ready(function ($) {
                 // Optionally, you can redirect or perform other actions here
                 // window.location.href = "https://ritik.devwork.in";
                 window.location.href = "https://ritik.devwork.in/user-details";
+
             }
         }).fail(function (xhr, status, error) {
             // Log and display an error message if the request fails

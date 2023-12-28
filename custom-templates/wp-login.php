@@ -1,5 +1,6 @@
 <?php
 /* Template Name: Custom Login Page */
+
 $User_ID = get_current_user_id();
 $error_messages = array(
     'username' => '',
@@ -8,6 +9,7 @@ $error_messages = array(
 );
 
 if (!$User_ID) {
+    // echo $User_ID;
 
     if (isset($_POST['btn_submit'])) {
         $username = sanitize_user($_POST['username']);
@@ -100,5 +102,6 @@ if (!$User_ID) {
     get_footer();
 } else {
     echo "YOU ARE ALREADY SIGNED IN. PLEASE GO BACK!";
+    // echo $User_ID. ' else';
 }
 ?>

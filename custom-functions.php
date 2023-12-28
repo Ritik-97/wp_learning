@@ -148,7 +148,7 @@ function update_user_details() {
 
 
 
-// custom-functions
+// Custom-functions
 
 
 
