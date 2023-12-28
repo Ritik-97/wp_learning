@@ -97,6 +97,11 @@ if ($pagenow == "wp-login.php" && $_GET['action']!=="logout"){
 add_action( 'init', 'redirect_wp_admin');
 
 
+
+
+
+
+
 include_once get_stylesheet_directory() . '/custom-functions.php';
 
 

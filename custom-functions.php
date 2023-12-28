@@ -18,8 +18,8 @@ function ajax_register() {
     $email = ($_POST['email']);
     $firstname = ($_POST['first_name']);
     $lastname = ($_POST['last_name']);
-    $password = ($_POST['password']); // Sanitize password
-    $selected_role = ($_POST['role']); // Use 'user_role' instead of 'role'
+    $password = ($_POST['password']); 
+    $selected_role = ($_POST['role']);
 
     // Validate and sanitize the selected role
     $allowed_roles = array('moderator', 'customer', 'subscriber', 'administrator');
@@ -56,11 +56,15 @@ if (is_wp_error($user_id)) {
 
     $user = wp_signon($creds, false);
 
-    if (is_wp_error($user)) {
-        echo json_encode(array('registered' => true, 'message' => 'Registration successful, but login failed.'));
-    } else {
-        echo json_encode(array('registered' => true, 'message' => 'Registration and login successful.'));
-    }
+if (is_wp_error($user)) {
+    echo json_encode(array('registered' => true, 'message' => 'Registration successful, but login failed.'));
+} else {
+    
+    // Set authentication cookies
+    wp_set_auth_cookie($user_id, true);
+    
+    echo json_encode(array('registered' => true, 'message' => 'Registration and login successful.'));
+}
 }
 
     header('Content-Type: application/json');
@@ -69,6 +73,9 @@ if (is_wp_error($user_id)) {
 
 add_action('wp_ajax_nopriv_ajax_register', 'ajax_register');
 add_action('wp_ajax_ajax_register', 'ajax_register');
+
+
+
 
 // Callback function to generate a password
 function generate_password_callback() {
@@ -84,7 +91,7 @@ add_action('wp_ajax_nopriv_generate_password', 'generate_password_callback');
 
 
 
-// update user function
+// update User function
 
 function enqueue_jquery() {
     wp_enqueue_script('jquery');
@@ -220,6 +227,7 @@ add_action( 'wp_logout', 'redirect_to_custom_login');
 
 
 // function to add roles
+
     add_role('moderator', 'Moderator', array(
         'read' => true,
         'create_posts' => true,

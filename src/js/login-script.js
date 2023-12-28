@@ -19,7 +19,7 @@
                         $('#password').after('<p class="error-message" style="color: red;">Please enter a password.</p>');
                     }
 
-                    return; // Stop further processing if there are validation errors
+                    return; 
                 }
 
                 // Disable the button and show loading indicator
